@@ -19,8 +19,8 @@ In order to determine if a strip is open, we only have to check it against the s
 
 Because islands can fork and merge, in order to keep track of what island a strip belongs to, I'm using cascading inheritence: A strip is created without an island name. If there are no strips touching it in row above it, that newly created strip is assigned a new island name. Otherwise, it inherits the island name of the leftmost strip it's in contact with. That strip then passes on its island name to any subsequent strip it touches. That way, when multiple seemingly seperate islands converge, only one island name is kept and propogated. As an example:
 
-01100110
-00100100
+01100110\
+00101100\
 00111100
 
 the 1s in the first 2 lines of the array would have been assigned different island names, island_a and island_b, because they were unconnected. But once it's discovered they connect at the third line, everything with the assignment "island_b" gets reassigned as "island_a"
