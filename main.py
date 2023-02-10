@@ -6,6 +6,11 @@ class Strip:
         self.island_index = island_index
 
     def explore(self, arr):
+        """
+        traverses a row to find where a given strip ends and records that ending index
+        :param arr: the row that is being explored
+        :return: a strip with an updated ending index
+        """
         while self.stop < len(arr):
             next_step = self.stop + 1
             if next_step >= len(arr):
@@ -16,6 +21,10 @@ class Strip:
                 self.stop = next_step
 
     def is_touching(self, strip):
+        """
+        :param strip: the strip one strip is being compared against
+        :return: If the two strips are in contact with each other
+        """
         min_range = max(self.start - 1, 0)
         max_range = self.stop + 1
 
@@ -27,6 +36,10 @@ class Strip:
 
 
 def strip_finder(arr):
+    """
+    :param arr:
+    :return: A list of strips found in a given line
+    """
     row_len = len(arr)
     index = 0
     strips = []
@@ -51,7 +64,7 @@ def strip_state_finder(top_row, bottom_row):
     bellow it.
     :param top_row: the row being actively explored
     :param bottom_row: the row bellow the row that is being explored
-    :return: a tuple with the updated top row and bottom row respectively
+    :return: a tuple with the updated top and bottom row respectively
     """
     updated_bottom_row = []
 
@@ -82,6 +95,10 @@ def strip_state_finder(top_row, bottom_row):
 
 
 def island_counter(row):
+    """
+    :param row: A list of strips belonging to a line of text
+    :return: The number of islands fully explored in a line
+    """
     islands = set()
     open_islands = set()
     for strip in row:
@@ -95,6 +112,11 @@ def island_counter(row):
 
 
 def solution(filename):
+    """
+    Takes in a file path, and counts the number of distinct islands found
+    :param filename: the file path to be explored
+    :return: the number of islands found
+    """
     total_islands = 0
     max_island_index = 0
     top_row = []
