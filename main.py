@@ -17,12 +17,11 @@ class Strip:
 
     def is_touching(self, strip):
         min_range = max(self.start - 1, 0)
-        max_range = self.stop + 2
+        max_range = self.stop + 1
 
-        if strip.start in range(min_range, max_range):
-            return True
-        if strip.stop in range(min_range, max_range):
-            return True
+        for i in range(strip.start, strip.stop):
+            if i in range(min_range, max_range):
+                return True
 
         return False
 
