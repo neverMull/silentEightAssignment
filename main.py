@@ -1,3 +1,6 @@
+import sys
+
+
 class Strip:
     def __init__(self, start, stop, state, island_index):
         self.start = start
@@ -122,8 +125,12 @@ def solution(filename):
     top_row = []
 
     with open(filename) as contents:
-        for line in contents:
-            processed_line = [int(char) for char in line.strip()]
+        for index, line in enumerate(contents):
+            try:
+                processed_line = [int(char) for char in line.strip()]
+            except:
+                sys.exit(f'non integer character at line {index+1}')
+
             bottom_row = strip_finder(processed_line)
             top_row, bottom_row = strip_state_finder(top_row, bottom_row)
             total_islands += island_counter(top_row)
