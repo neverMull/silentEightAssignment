@@ -1,4 +1,5 @@
 import sys
+import getopt
 
 
 class Strip:
@@ -28,13 +29,10 @@ class Strip:
         :param strip: the strip one strip is being compared against
         :return: If the two strips are in contact with each other
         """
-        min_range = max(self.start - 1, 0)
-        max_range = self.stop + 1
-
-        for i in range(strip.start, strip.stop):
-            if i in range(min_range, max_range):
-                return True
-
+        top_span = set(range(self.start-1, self.stop+2))
+        bottom_span = set(range(strip.start, strip.stop+1))
+        if top_span & bottom_span:
+            return True
         return False
 
 
@@ -67,34 +65,37 @@ def strip_state_finder(top_row, bottom_row):
     bellow it.
     :param top_row: the row being actively explored
     :param bottom_row: the row bellow the row that is being explored
-    :return: a tuple with the updated top and bottom row respectively
+    :return: a tuple with the updated top and bottom row in that order
     """
-    updated_bottom_row = []
+    bottom_row = bottom_row
+    updated_top_row = []
 
-    for current_strip in top_row:
-        for bottom_strip in bottom_row:
-            if current_strip.is_touching(bottom_strip):
-                current_strip.state = 'open'
+    for top_strip in top_row:
+        start = 0
+        for i in range(start, len(bottom_row)):
+            bottom_strip = bottom_row[i]
+            if top_strip.is_touching(bottom_strip):
+                top_strip.state = 'open'
                 # if the current strip is touching a bottom strip with an existing island index
                 # it inherits that island index since it is connected to that island via the bottom strip
                 if bottom_strip.island_index:
-                    current_strip.island_index = bottom_strip.island_index
+                    top_strip.island_index = bottom_strip.island_index
                 else:
-                    bottom_strip.island_index = current_strip.island_index
-                continue
+                    bottom_strip.island_index = top_strip.island_index
+
+                bottom_row[i] = bottom_strip
+
             # if the bottom strip is fully to the left of the current strip it will
             # be to the left of all other strips in the top row
-            if current_strip.start > bottom_strip.stop:
-                irrelevant = bottom_row.pop(0)
-                updated_bottom_row.append(irrelevant)
-                continue
+            elif bottom_strip.stop + 1 < top_strip.start:
+                start += 1
 
-            if current_strip.stop < bottom_strip.start:
+            elif bottom_strip.start + 1 > top_strip.stop:
                 break
 
-    updated_bottom_row = updated_bottom_row + bottom_row
+        updated_top_row.append(top_strip)
 
-    return top_row, updated_bottom_row
+    return updated_top_row, bottom_row
 
 
 def island_counter(row):
@@ -114,7 +115,7 @@ def island_counter(row):
     return islands_explored
 
 
-def solution(filename):
+def solve(filename):
     """
     Takes in a file path, and counts the number of distinct islands found
     :param filename: the file path to be explored
@@ -130,16 +131,19 @@ def solution(filename):
                 processed_line = [int(char) for char in line.strip()]
             except:
                 sys.exit(f'non integer character at line {index+1}')
-
-            bottom_row = strip_finder(processed_line)
-            top_row, bottom_row = strip_state_finder(top_row, bottom_row)
-            total_islands += island_counter(top_row)
-            for element in bottom_row:
+            for element in top_row:
                 if not element.island_index:
                     element.island_index = max_island_index
                     max_island_index += 1
+            bottom_row = strip_finder(processed_line)
+            top_row, bottom_row = strip_state_finder(top_row, bottom_row)
+            total_islands += island_counter(top_row)
             top_row, bottom_row = bottom_row, []
 
         total_islands += island_counter(top_row)
 
-    return total_islands
+    sys.stdout.write(str(total_islands))
+
+
+if __name__ == "__main__":
+   solve(sys.argv[1])
