@@ -1,5 +1,8 @@
 # silentEightAssignment
 
+## Problem
+
+You are given a large file of unknown size containing a grid of 0s and 1s. Within the grid, any group of 1s touhing eachother forms an island. Write a program that counts the number of islands in a file.
 
 ## Definitions
 
